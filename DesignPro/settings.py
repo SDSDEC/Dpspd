@@ -105,9 +105,9 @@ MEDIA_ROOT = BASE_DIR / 'media'
 
 DEFAULT_AUTO_FIELD = 'django.db.models.BigAutoField'
 DEFAULT_RUNSERVER_PORT = '8089'
-# Настройки email для восстановления пароля
+#email для восстановления пароля
 EMAIL_BACKEND = 'django.core.mail.backends.console.EmailBackend'
 
 LOGIN_URL = '/login/'
-LOGIN_REDIRECT_URL = '/'  # После входа - на главную
-LOGOUT_REDIRECT_URL = '/'  # После выхода - на главную
+LOGIN_REDIRECT_URL = '/'
+LOGOUT_REDIRECT_URL = '/'
