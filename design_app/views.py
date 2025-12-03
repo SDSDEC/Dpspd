@@ -6,6 +6,7 @@ from django.db.models import Count, Q
 from .models import RoomPlan, Category, UserProfile
 from .forms import CustomUserCreationForm, RoomPlanForm, RoomPlanStatusForm, CustomAuthenticationForm
 
+# проверка роли
 def is_staff_user(user):
     if not user.is_authenticated:
         return False
@@ -32,7 +33,7 @@ def is_designer_user(user):
         return profile.is_designer()
     except UserProfile.DoesNotExist:
         return False
-
+# главная
 def index(request):
     completed_applications = RoomPlan.objects.filter(
         status='COMPLETED'
@@ -47,6 +48,7 @@ def index(request):
     }
     return render(request, 'design_app/index.html', context)
 
+# регистрация
 def register_user(request):
     if request.user.is_authenticated:
         return redirect('index')
@@ -66,6 +68,7 @@ def register_user(request):
     context = {'form': form, 'title': 'Регистрация'}
     return render(request, 'design_app/register.html', context)
 
+# вход
 def login_user(request):
     if request.user.is_authenticated:
         if is_staff_user(request.user):
@@ -94,11 +97,13 @@ def login_user(request):
 
     return render(request, 'design_app/login.html', {'form': form, 'title': 'Вход в систему'})
 
+# выход
 def logout_user(request):
     logout(request)
     messages.info(request, "Вы вышли из системы.")
     return redirect('index')
 
+# личный профиль клиента
 @login_required
 def user_profile(request):
     if is_staff_user(request.user):
@@ -117,6 +122,7 @@ def user_profile(request):
     }
     return render(request, 'design_app/profile.html', context)
 
+# создание заявки клиентом
 @login_required
 def create_room_plan(request):
     if is_staff_user(request.user):
@@ -138,6 +144,7 @@ def create_room_plan(request):
     context = {'form': form, 'title': 'Создание заявки'}
     return render(request, 'design_app/create_room_plan.html', context)
 
+# удаление заявки клиентом
 @login_required
 def delete_room_plan(request, plan_id):
     if is_staff_user(request.user):
@@ -157,6 +164,7 @@ def delete_room_plan(request, plan_id):
     context = {'room_plan': application, 'title': 'Удаление заявки'}
     return render(request, 'design_app/delete_room_plan.html', context)
 
+# админпанель
 @user_passes_test(is_staff_user, login_url='/login/')
 def admin_dashboard(request):
     applications = RoomPlan.objects.all().select_related('user', 'category').order_by('-upload_date')
@@ -195,28 +203,7 @@ def admin_dashboard(request):
     }
     return render(request, 'design_app/admin_dashboard.html', context)
 
-@user_passes_test(is_staff_user, login_url='/login/')
-def edit_application(request, plan_id):
-    application = get_object_or_404(RoomPlan, id=plan_id)
-
-    if request.method == 'POST':
-        form = RoomPlanStatusForm(request.POST, request.FILES, instance=application)
-        if form.is_valid():
-            form.save()
-            messages.success(request, 'Статус заявки успешно обновлен!')
-            return redirect('admin_dashboard')
-        else:
-            messages.error(request, 'Пожалуйста, исправьте ошибки в форме.')
-    else:
-        form = RoomPlanStatusForm(instance=application)
-
-    context = {
-        'form': form,
-        'application': application,
-        'title': 'Редактирование заявки'
-    }
-    return render(request, 'design_app/edit_application.html', context)
-
+# управление админом
 @user_passes_test(is_admin_user, login_url='/login/')
 def manage_categories(request):
     if request.method == 'POST':
@@ -247,3 +234,26 @@ def manage_categories(request):
         'categories': categories
     }
     return render(request, 'design_app/manage_categories.html', context)
+
+# редакт заявки админом
+@user_passes_test(is_staff_user, login_url='/login/')
+def edit_application(request, plan_id):
+    application = get_object_or_404(RoomPlan, id=plan_id)
+
+    if request.method == 'POST':
+        form = RoomPlanStatusForm(request.POST, request.FILES, instance=application)
+        if form.is_valid():
+            form.save()
+            messages.success(request, 'Статус заявки успешно обновлен!')
+            return redirect('admin_dashboard')
+        else:
+            messages.error(request, 'Пожалуйста, исправьте ошибки в форме.')
+    else:
+        form = RoomPlanStatusForm(instance=application)
+
+    context = {
+        'form': form,
+        'application': application,
+        'title': 'Редактирование заявки'
+    }
+    return render(request, 'design_app/edit_application.html', context)

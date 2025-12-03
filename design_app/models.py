@@ -2,6 +2,7 @@ from django.db import models
 from django.contrib.auth.models import User
 from django.core.validators import RegexValidator
 
+# категории
 class Category(models.Model):
     name = models.CharField(max_length=100, verbose_name="Название категории")
     description = models.TextField(blank=True, verbose_name="Описание")
@@ -13,6 +14,7 @@ class Category(models.Model):
     def __str__(self):
         return self.name
 
+# профиль с валидацией
 class UserProfile(models.Model):
     USER_TYPES = [
         ('CLIENT', 'Клиент'),
@@ -61,6 +63,7 @@ class UserProfile(models.Model):
     def is_client(self):
         return self.user_type == 'CLIENT'
 
+# заявка
 class RoomPlan(models.Model):
     STATUS_CHOICES = [
         ('NEW', 'Новая'),

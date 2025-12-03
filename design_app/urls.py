@@ -8,6 +8,7 @@ urlpatterns = [
     path('register/', views.register_user, name='register'),
     path('logout/', views.logout_user, name='logout'),
 
+# восст.пароля
     re_path(r'^password-reset/$',
          auth_views.PasswordResetView.as_view(
              template_name='design_app/registration/password_reset_form.html',
@@ -30,10 +31,12 @@ urlpatterns = [
          ),
          name='password_reset_complete'),
 
+# личный профиль и заявки
     path('profile/', views.user_profile, name='profile'),
     path('room-plan/create/', views.create_room_plan, name='create_room_plan'),
     re_path(r'^room-plan/delete/(?P<plan_id>\d+)/$', views.delete_room_plan, name='delete_room_plan'),
 
+# админка
     path('admin-dashboard/', views.admin_dashboard, name='admin_dashboard'),
     re_path(r'^admin-dashboard/application/(?P<plan_id>\d+)/$', views.edit_application, name='edit_application'),
     path('admin-dashboard/categories/', views.manage_categories, name='manage_categories'),

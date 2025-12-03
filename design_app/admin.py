@@ -2,6 +2,7 @@ from django.contrib import admin
 from django.utils.html import format_html
 from .models import Category, UserProfile, RoomPlan
 
+# категории
 @admin.register(Category)
 class CategoryAdmin(admin.ModelAdmin):
     list_display = ['name', 'description', 'applications_count']
@@ -13,6 +14,7 @@ class CategoryAdmin(admin.ModelAdmin):
 
     applications_count.short_description = 'Кол-во заявок'
 
+# профиль пользователя
 @admin.register(UserProfile)
 class UserProfileAdmin(admin.ModelAdmin):
     list_display = ['full_name', 'user', 'user_type', 'agreement']
@@ -20,6 +22,7 @@ class UserProfileAdmin(admin.ModelAdmin):
     list_filter = ['user_type', 'agreement']
     raw_id_fields = ['user']
 
+# заявки
 @admin.register(RoomPlan)
 class RoomPlanAdmin(admin.ModelAdmin):
     list_display = [
@@ -85,6 +88,7 @@ class RoomPlanAdmin(admin.ModelAdmin):
 
     design_image_preview.short_description = 'Предпросмотр дизайна'
 
+# большее изменение статуса
     actions = ['mark_as_new', 'mark_as_in_progress', 'mark_as_completed']
 
     def mark_as_new(self, request, queryset):
